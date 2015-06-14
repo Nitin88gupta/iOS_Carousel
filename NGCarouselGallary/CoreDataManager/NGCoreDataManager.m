@@ -187,7 +187,7 @@ static NGCoreDataManager *sharedCoreDataInstance;
     }
 }
 
-- (NSArray *)fetchGallayObjectListSortedAscending:(BOOL)ascending forKey:(NSString *)key {
+- (NSArray *)fetchGallayObjectListSortedAscending:(BOOL)ascending forKey:(NSString *)key searchString:(NSString *)search {
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"GallaryObject" inManagedObjectContext:_managedObjectContext];
     [fetchRequest setEntity:entity];
@@ -195,6 +195,10 @@ static NGCoreDataManager *sharedCoreDataInstance;
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:key
                                                                    ascending:ascending];
     [fetchRequest setSortDescriptors:[NSArray arrayWithObjects:sortDescriptor, nil]];
+    if (search && [search length]) {
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(%K CONTAINS %@)", key,search];
+        [fetchRequest setPredicate:predicate];
+    }
     
     NSError *error = nil;
     NSArray *fetchedObjects = [_managedObjectContext executeFetchRequest:fetchRequest error:&error];

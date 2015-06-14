@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>77EAEF9D-BB85-451F-8243-01CD825CDB53</string>
+	<key>IDESourceControlProjectName</key>
+	<string>NGCarouselGallary</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>AF8CC92A83A6CB3A34D669CCBB07BF933A7AB270</key>
+		<string>https://github.com/Nitin88gupta/iOS_Carousel.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>NGCarouselGallary.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>AF8CC92A83A6CB3A34D669CCBB07BF933A7AB270</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/Nitin88gupta/iOS_Carousel.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>AF8CC92A83A6CB3A34D669CCBB07BF933A7AB270</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>AF8CC92A83A6CB3A34D669CCBB07BF933A7AB270</string>
+			<key>IDESourceControlWCCName</key>
+			<string>iOS_Carousel</string>
+		</dict>
+	</array>
+</dict>
+</plist>

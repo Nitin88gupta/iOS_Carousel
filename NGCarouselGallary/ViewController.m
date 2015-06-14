@@ -16,13 +16,14 @@
 
 @import MobileCoreServices;
 
-@interface ViewController ()<NGCarouselDataSource,NGCarouselDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate,UIActionSheetDelegate> {
+@interface ViewController ()<NGCarouselDataSource,NGCarouselDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate,UIActionSheetDelegate,UITextFieldDelegate> {
     ViewControllerMode _mode;
     BOOL _ascending;
     NSInteger _selectedIndex;
     NSMutableArray *_gallaryCollectionArray;
     IBOutlet NGCarousel *carousel;
     IBOutlet UISegmentedControl *sortSegment;
+    NSString *_searchString;
 }
 @end
 
@@ -82,6 +83,9 @@
         case kEditingMode: {
             [self navigationForEditMode];
         } break;
+        case kSearchMode: {
+            [self navigationForSearchMode];
+        } break;
         default: {
             
         } break;
@@ -91,7 +95,8 @@
 - (void)navigationForDefualtMode {
     [self navigationItem].leftBarButtonItem = nil;
     [self navigationItem].rightBarButtonItem = nil;
-    
+    [self navigationItem].titleView = nil;
+
     UIButton *leftAddButton = [UIButton buttonWithType:UIButtonTypeContactAdd];
     [leftAddButton addTarget:self action:@selector(addItemsToGallaryAction:) forControlEvents:UIControlEventTouchUpInside];
     UIBarButtonItem *leftBarItem = [[UIBarButtonItem alloc] initWithCustomView:leftAddButton];
@@ -115,6 +120,7 @@
 - (void)navigationForEditMode {
     [self navigationItem].leftBarButtonItem = nil;
     [self navigationItem].rightBarButtonItem = nil;
+    [self navigationItem].titleView = nil;
 
     UIButton *leftDeleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [leftDeleteButton addTarget:self action:@selector(deleteItemsFromGallaryAction:) forControlEvents:UIControlEventTouchUpInside];
@@ -133,11 +139,39 @@
 
 }
 
+- (void)navigationForSearchMode {
+    [self navigationItem].leftBarButtonItem = nil;
+    [self navigationItem].rightBarButtonItem = nil;
+    
+    UIButton *rightDoneButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [rightDoneButton  setFrame:CGRectMake(0, 0, 60, 30)];
+    [rightDoneButton addTarget:self action:@selector(doneButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+    [rightDoneButton setTitle:@"Done" forState:UIControlStateNormal];
+    UIBarButtonItem *firstItem = [[UIBarButtonItem alloc] initWithCustomView:rightDoneButton];
+    [self navigationItem].rightBarButtonItem = firstItem;
+
+    UITextField *textField = [[UITextField alloc] initWithFrame:CGRectMake(10, 0, self.view.frame.size.width, 30)];
+    textField.borderStyle = UITextBorderStyleRoundedRect;
+    textField.tintColor = [UIColor blackColor];
+    textField.font = [UIFont systemFontOfSize:15];
+    textField.placeholder = @"Search";
+    textField.autocorrectionType = UITextAutocorrectionTypeNo;
+    textField.keyboardType = UIKeyboardTypeDefault;
+    textField.returnKeyType = UIReturnKeyDone;
+    textField.clearButtonMode = UITextFieldViewModeWhileEditing;
+    textField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+    textField.delegate = self;
+    [self navigationItem].titleView = textField;
+    [textField becomeFirstResponder];
+}
+
 #pragma mark - View Life Cycle
 - (void)setupInterface  {
     _mode = kDefaultMode;
     _ascending = YES;
     _selectedIndex = -1;
+    
+    _searchString = nil;
     
     [carousel setDataSource:self];
     [carousel setDelegate:self];
@@ -173,7 +207,7 @@
         sortKey = @"title";
     }
     
-    NSArray *objectArray = [[NGCoreDataManager sharedCoreData] fetchGallayObjectListSortedAscending:_ascending forKey:sortKey];
+    NSArray *objectArray = [[NGCoreDataManager sharedCoreData] fetchGallayObjectListSortedAscending:_ascending forKey:sortKey searchString:_searchString];
     [_gallaryCollectionArray addObjectsFromArray:objectArray];
 
     // Reload Data
@@ -293,6 +327,7 @@
         }
         dispatch_async(dispatch_get_main_queue(), ^{
             _mode = kDefaultMode;
+            _searchString = nil;
             [carousel deselectAllCheckMarked];
             [self updateNavigationInterface];
         });
@@ -316,6 +351,7 @@
         [self deleteObjectAPIForID:objID];
     } else {
         _mode = kDefaultMode;
+        _searchString = nil;
         [carousel deselectAllCheckMarked];
         [self updateNavigationInterface];
     }
@@ -330,12 +366,24 @@
 }
 - (IBAction)searchItemsAction:(id)sender {
     FunctionLog();
-    
+    _mode = kSearchMode;
+    [self updateNavigationInterface];
 }
 
 - (IBAction)doneButtonAction:(id)sender {
+    switch (_mode) {
+        case kEditingMode: {
+            [carousel deselectAllCheckMarked];
+        } break;
+        case kSearchMode: {
+
+        } break;
+            
+        default:
+            break;
+    }
     _mode = kDefaultMode;
-    [carousel deselectAllCheckMarked];
+    _searchString = nil;
     [self updateNavigationInterface];
 }
 
@@ -365,7 +413,8 @@
 - (void)carousel:(NGCarousel *)carouselView didSelectItemAtIndex:(NSInteger)index itemView:(UIView *)itemView {
     _selectedIndex = index;
     _mode = kEditingMode;
-   
+    _searchString = nil;
+
     [self updateNavigationInterface];
     
     [carouselView deselectAllCheckMarked];
@@ -421,6 +470,39 @@
 
 - (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
     [[UIApplication sharedApplication] setStatusBarHidden:YES];
+}
+
+#pragma mark - UITextFieldDelegate
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
+    return YES;
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField {
+    FunctionLog();
+}
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
+    FunctionLog();
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    [textField resignFirstResponder];
+    return YES;
+}
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    NSString *newString = [[textField text] stringByReplacingCharactersInRange:range withString:string];
+    NSLog(@"newString = %@",newString);
+    _searchString = [newString copy];
+    [self updateGallaryDataForObjects:nil deleted:NO];
+    
+    return YES;
+}
+
+- (BOOL)textFieldShouldClear:(UITextField *)textField {
+    _searchString = nil;
+    [self updateGallaryDataForObjects:nil deleted:NO];
+    return YES;
 }
 
 @end

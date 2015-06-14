@@ -45,6 +45,7 @@
 typedef enum {
     kDefaultMode = 0,
     kEditingMode,
+    kSearchMode,
 }ViewControllerMode;
 
 typedef enum {

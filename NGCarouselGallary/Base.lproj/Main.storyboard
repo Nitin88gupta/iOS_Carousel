@@ -26,8 +26,8 @@
                                     <constraint firstAttribute="width" constant="229" id="8Er-1n-iOP"/>
                                 </constraints>
                                 <segments>
-                                    <segment title="Sort By Author"/>
-                                    <segment title="Sort By Title"/>
+                                    <segment title="Author"/>
+                                    <segment title="Title"/>
                                 </segments>
                                 <connections>
                                     <action selector="sortSegmentValueChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="34O-77-YwE"/>

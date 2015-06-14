@@ -24,6 +24,6 @@
 //MO Operations
 - (void)checkAndInsertGallaryObjectForInfo:(NSDictionary *)objectInfo;
 - (void)checkAndDeleteGallaryObject:(NSString *)objectID;
-- (NSArray *)fetchGallayObjectListSortedAscending:(BOOL)ascending forKey:(NSString *)key;
+- (NSArray *)fetchGallayObjectListSortedAscending:(BOOL)ascending forKey:(NSString *)key searchString:(NSString *)search;
 
 @end
