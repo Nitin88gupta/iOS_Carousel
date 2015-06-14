@@ -477,14 +477,6 @@
     return YES;
 }
 
-- (void)textFieldDidEndEditing:(UITextField *)textField {
-    FunctionLog();
-}
-
-- (void)textFieldDidBeginEditing:(UITextField *)textField {
-    FunctionLog();
-}
-
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
     [textField resignFirstResponder];
     return YES;
